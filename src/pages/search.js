@@ -231,7 +231,12 @@ const Search = () => {
                     >
                     <TableHead>
                         <TableRow>
-                        <TableCell as="th">グループ</TableCell>
+                        {
+                            user_group && groups && user_group.admin_flag ?
+                            <TableCell as="th">グループ</TableCell>
+                            :
+                            ''
+                        }
                         <TableCell as="th">店舗</TableCell>
                         <TableCell as="th">種類</TableCell>
                         <TableCell as="th">大きさ</TableCell>
@@ -243,13 +248,18 @@ const Search = () => {
                     {
                         dogs.map(dog => (
                             <TableRow key={dog.id}>
-                                <TableCell>
                                 {
-                                    groups.find(
-                                        (group) => group.id === (shops.find((shop) => shop.id === dog.dogMShopId)?.mShopMGroupId)
-                                    )?.group_name
+                                    user_group && groups && user_group.admin_flag ?
+                                    <TableCell>
+                                    {
+                                        groups.find(
+                                            (group) => group.id === (shops.find((shop) => shop.id === dog.dogMShopId)?.mShopMGroupId)
+                                        )?.group_name
+                                    }
+                                    </TableCell>
+                                    :
+                                    ''
                                 }
-                                </TableCell>
                                 <TableCell>{shops.find((shop) => shop.id === dog.dogMShopId)?.shop_name}</TableCell>
                                 <TableCell><Link href={`/update/${dog.id}`}>{types.find((item) => item.type === dog.type)?.type_name}</Link></TableCell>
                                 <TableCell>{sizes.find((item) => item.size === dog.size)?.size_name}</TableCell>
