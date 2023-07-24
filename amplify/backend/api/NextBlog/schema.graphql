@@ -1,0 +1,233 @@
+enum Prefecture {
+  A01_HOKKAIDO
+  A02_AOMORI
+  A03_IWATE
+  A04_MIYAGI
+  A05_AKITA
+  A06_YAMAGATA
+  A07_FUKUSHIMA
+  A08_IBARAKI
+  A09_TOCHIGI
+  A10_GUMMA
+  A11_SAITAMA
+  A12_CHIBA
+  A13_TOKYO
+  A14_KANAGAWA
+  A15_NIGATA
+  A16_TOYAMA
+  A17_ISHIKAWA
+  A18_FUKUI
+  A19_YAMANASHI
+  A20_NAGANO
+  A21_GIFU
+  A22_SHIZUOKA
+  A23_AICHI
+  A24_MIE
+  A25_SHIGA
+  A26_KYOTO
+  A27_OSAKA
+  A28_HYOGO
+  A29_NARA
+  A30_WAKAYAMA
+  A31_TOTTORI
+  A32_SHIMANE
+  A33_OKAYAMA
+  A34_HIROSHIMA
+  A35_YAMAGUCHI
+  A36_TOKUSHIMA
+  A37_KAGAWA
+  A38_EHIME
+  A39_KOCHI
+  A40_FUKUOKA
+  A41_SAGA
+  A42_NAGASAKI
+  A43_KUMAMOTO
+  A44_OITA
+  A45_MIYAZAKI
+  A46_KAGOSHIMA
+  A47_OKINAWA
+}
+
+type MPrefecture @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  prefecture: Prefecture
+  prefecture_name: String
+  sort: Int
+  MArea: MArea @hasOne
+}
+
+type MGroup @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  group_name: String
+  admin_flag: Boolean
+  sort: Int
+}
+
+type MParticularCondition @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  particular_condition: ParticularCondition
+  particular_condition_name: String
+  sort: Int
+}
+
+type MPriceRange @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  price_range: PriceRange
+  price_range_name: String
+  sort: Int
+}
+
+type MTypeHair @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  type_hair: TypeHair
+  type_hair_name: String
+  sort: Int
+}
+
+type MNature @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  nature: Nature
+  nature_name: String
+  sort: Int
+}
+
+type MType @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  type: Type
+  type_name: String
+  sort: Int
+}
+
+type MShop @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  shop_name: String
+  area: Area
+  prefecture: Prefecture
+  MGroup: MGroup @hasOne
+  sort: Int
+}
+
+type MArea @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  area: Area
+  area_name: String
+  sort: Int
+}
+
+type MBirthday @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  birthday: Birthday
+  birthday_name: String
+  sort: Int
+}
+
+type MGender @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  gender: Gender
+  gender_name: String
+  sort: Int
+}
+
+type MSize @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  size: Size
+  size_name: String
+  sort: Int
+}
+
+enum Type {
+  AKITAKEN
+  POODLE
+  COLLIE
+  POMERANIAN
+  GOLDEN_RETRIEVER
+  SIBERIAN_HUSKY
+  CHIHUAHUA
+  STANDARD_DACHSHUND
+}
+
+enum ParticularCondition {
+  RARE
+  PEDIGREE
+  CHAMPION
+  VIDEO
+}
+
+enum PriceRange {
+  UNDER_50000
+  UNDER_100000
+  UNDER_150000
+  UNDER_200000
+  UNDER_250000
+  UNDER_300000
+  OVER_300000
+}
+
+enum Birthday {
+  AFTER_49_90
+  AFTER_98_180
+  AFTER_181
+}
+
+enum Gender {
+  MALE
+  FEMALE
+}
+
+enum TypeHair {
+  SHORT
+  LONG
+  SPECIAL
+}
+
+enum Size {
+  ULTRA_SMALL
+  SMALL
+  MEDIUM
+  LARGE
+  ULTRA_LARGE
+}
+
+enum Area {
+  A_TOHOKU
+  B_KANTO
+  C_CHUBU
+  D_KINKI
+  E_CHUGOKU
+  F_SHIKOKU
+  G_KYUSHU
+}
+
+enum Nature {
+  SHORT
+  LONG
+  SPECIAL
+}
+
+type Dog @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  size: Size
+  type: Type
+  gender: Gender
+  birthday: Birthday
+  MShop: MShop @hasOne
+  nature: Nature
+  type_hair: TypeHair
+  area: Area
+  prefecture: Prefecture
+  particular_condition: ParticularCondition
+  free_word: String
+  image_name: String
+  publish_status: Int
+  appeal_point: String
+  buy_flag: Boolean
+  price_range: PriceRange
+}
+
+type Post @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  title: String
+  content: String
+  author: String
+}
+ 
