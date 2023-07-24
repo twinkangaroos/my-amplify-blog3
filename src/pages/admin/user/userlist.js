@@ -204,6 +204,10 @@ export default UserList
 // 先にAPIが実行される
 export const getServerSideProps = async(context) => {
     const { req } = context
+
+    // アクセスしたIPアドレスを取得
+    const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+    console.log("ip address===", ip)
     let protocol = req.headers["x-forwarded-proto"] || "https"
     // Hostingすると「https, http」と入る対策
     protocol = protocol.includes("https") ? "https" : "http"

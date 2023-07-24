@@ -23,6 +23,8 @@ const Search = () => {
     const [types, setTypes] = useState([])
     const [genders, setGenders] = useState([])
     const [user_group, setUserGroup] = useState("")
+    const [groups, setGroups] = useState([])
+    const [condition_group, setConditionGroup] = useState("")
     
     // 初期処理
     useEffect(() => {
@@ -32,7 +34,7 @@ const Search = () => {
     // 検索条件選択→Dog抽出
     useEffect(() => {
         fetchDogs()
-    }, [user_group, shops, condition_type, condition_shop]);
+    }, [user_group, shops, condition_type, condition_shop, condition_group]);
     // 初期処理が後の処理になった場合に備えて、初期設定でセットする変数をセット（変数がセットされたら起動するため）
 
     // 初期処理
@@ -66,6 +68,13 @@ const Search = () => {
             setShops(shopResults)
         }
 
+        // 管理者の場合、全グループを選択可（管理グループは除く）
+        if (groupResults[0].admin_flag) {
+            const m_group = await DataStore.query(MGroup, (c) => c.admin_flag.ne(true), {
+                sort:(s) => s.sort(SortDirection.ASCENDING),
+            })
+            setGroups(m_group)
+        }
         // 各マスタ系をリストボックス用にセット
         const m_size = await DataStore.query(MSize, Predicates.ALL, {
             sort:(s) => s.size(SortDirection.ASCENDING),
@@ -97,9 +106,26 @@ const Search = () => {
             }
         )
         
-        // 管理者の場合、全店舗のDogを取得
+        // 管理者の場合、全店舗のDogを取得（グループ指定があればDogの店舗IDに紐づくグループを抽出）
         if (user_group.admin_flag) {
-            setDogs(dogsResults)
+            if (!condition_group) {
+                setDogs(dogsResults)
+            }
+            else {
+                const showSearch = []
+                for (const _dog of dogsResults) {
+                    // 選択したグループidのみDog抽出
+                    for (const _shop of shops) {
+                        if (_shop.id === _dog.dogMShopId) {
+                            // 店舗のグループIDと選択したグループが等しい
+                            if (_shop.mShopMGroupId === condition_group) {
+                                showSearch.push(_dog)
+                            }
+                        }
+                    }
+                }
+                setDogs(showSearch)
+            }
         }
         // 管理者でない場合、ユーザーが所属するグループに所属する店舗のDogのみ抽出
         else {
@@ -149,6 +175,25 @@ const Search = () => {
                 gap="1rem"
             >
                 <Flex direction="row" alignItems="flex-start">
+                    {
+                        user_group && groups && user_group.admin_flag ?
+                        <SelectField
+                            label="グループ"
+                            size="default"
+                            value={condition_group}
+                            onChange={(e) => setConditionGroup(e.target.value)}
+                        >
+                            <option key="" value="">すべて</option>
+                            {
+                                groups.map(item => (
+                                    <option key={item.id} value={item.id}>{item.group_name}</option>
+                                ))
+                            }
+                        </SelectField>
+                        :
+                        ''
+                    }
+
                     <SelectField
                         label="店舗"
                         size="default"
@@ -186,6 +231,7 @@ const Search = () => {
                     >
                     <TableHead>
                         <TableRow>
+                        <TableCell as="th">グループ</TableCell>
                         <TableCell as="th">店舗</TableCell>
                         <TableCell as="th">種類</TableCell>
                         <TableCell as="th">大きさ</TableCell>
@@ -197,6 +243,13 @@ const Search = () => {
                     {
                         dogs.map(dog => (
                             <TableRow key={dog.id}>
+                                <TableCell>
+                                {
+                                    groups.find(
+                                        (group) => group.id === (shops.find((shop) => shop.id === dog.dogMShopId)?.mShopMGroupId)
+                                    )?.group_name
+                                }
+                                </TableCell>
                                 <TableCell>{shops.find((shop) => shop.id === dog.dogMShopId)?.shop_name}</TableCell>
                                 <TableCell><Link href={`/update/${dog.id}`}>{types.find((item) => item.type === dog.type)?.type_name}</Link></TableCell>
                                 <TableCell>{sizes.find((item) => item.size === dog.size)?.size_name}</TableCell>
