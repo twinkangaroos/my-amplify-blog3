@@ -6,9 +6,7 @@ import awsconfig from '../aws-exports';
 Amplify.configure({...awsconfig, ssr: true});
 
 import { I18n } from 'aws-amplify'
-import { translations } from '@aws-amplify/ui-react';
-
-import { Authenticator } from '@aws-amplify/ui-react';
+import { Authenticator, translations } from '@aws-amplify/ui-react';
 
 // https://ui.docs.amplify.aws/react/connected-components/authenticator/customization#internationalization-i18n
 I18n.putVocabularies(translations);
