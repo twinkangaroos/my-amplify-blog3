@@ -201,6 +201,7 @@ const UserList = (props) => {
 
 export default UserList
 
+// 先にAPIが実行される
 export const getServerSideProps = async(context) => {
     const { req } = context
     let protocol = req.headers["x-forwarded-proto"] || "https"

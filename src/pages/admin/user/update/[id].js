@@ -226,7 +226,9 @@ export default UpdateUser
 // 先にAPIが実行される
 export const getServerSideProps = async(context) => {
     const { req } = context
-    const protocol = req.headers["x-forwarded-proto"] || "https" // プロトコルを取得 (リバースプロキシを考慮)
+    let protocol = req.headers["x-forwarded-proto"] || "https"
+    // Hostingすると「https, http」と入る対策
+    protocol = protocol.includes("https") ? "https" : "http"
     const host = req.headers["x-forwarded-host"] || req.headers.host // ホストを取得 (リバースプロキシを考慮)
     const apiUrl = `${protocol}://${host}/api/user/${context.query.id}`
     const response = await fetch(apiUrl)
