@@ -126,12 +126,9 @@ const EdyEkyc = async(req, res) => {
             database: 'post1'
         });
 
-        console.log("host", secretJson.host)
-        console.log("user", secretJson.username)
-
         connection.connect((err) => {
             if (err) {
-                console.log('接続エラー: ' + err.stack);
+                console.log('接続エラー:(' + currentDate + ') ' + err.stack);
                 const response = {
                     statusCode: 501,
                     body: {
@@ -140,20 +137,21 @@ const EdyEkyc = async(req, res) => {
                     }
                 }
                 return res.status(501).json(response)
+            } else {
+                const query = 'INSERT INTO ekyc SET ?'
+                const result = connection.query(query, insertRecord);
+                console.log('データが挿入されました:');
+
+                const response = {
+                    statusCode: 200,
+                    body: {
+                        "result": "0", 
+                        "errorCode": ""
+                    }
+                }
+                return res.status(200).json(response)
             }
-            const query = 'INSERT INTO ekyc SET ?'
-            const result = connection.query(query, insertRecord);
-            console.log('データが挿入されました:');
         });
-        
-        const response = {
-            statusCode: 200,
-            body: {
-                "result": "0", 
-                "errorCode": ""
-            }
-        }
-        return res.status(200).json(response)
     } catch(err){
         console.log("An error has occured!!", err)
         const response = {
