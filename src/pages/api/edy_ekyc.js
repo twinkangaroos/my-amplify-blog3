@@ -119,7 +119,8 @@ const EdyEkyc = async(req, res) => {
         const secretJson = JSON.parse(secret);
 
         const connection = mysql.createConnection({
-            host: 'localhost',
+            //host: 'localhost',
+            host: secretJson.host,
             user: secretJson.username,
             password: secretJson.password,
             database: 'post1'
