@@ -125,17 +125,21 @@ const EdyEkyc = async(req, res) => {
             password: secretJson.password,
             database: 'post1'
         });
+
+        console.log("host", secretJson.host)
+        console.log("user", secretJson.username)
+
         connection.connect((err) => {
             if (err) {
                 console.log('接続エラー: ' + err.stack);
                 const response = {
-                    statusCode: 500,
+                    statusCode: 501,
                     body: {
                         "result": "1",
                         "errorCode": "200"
                     }
                 }
-                return res.status(500).json(response)
+                return res.status(501).json(response)
             }
             const query = 'INSERT INTO ekyc SET ?'
             const result = connection.query(query, insertRecord);
