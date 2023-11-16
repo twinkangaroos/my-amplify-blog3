@@ -62,42 +62,42 @@ const EdyEkyc = async(req, res) => {
             }
             return res.status(500).json(response)
         }
-        const body = JSON.parse(req.body);
-        const headers = req.headers;
-        
-        // ※ちなみに以下でも取得可
-        //console.log("applyNo1", body.applyNo)
-        const applyNo = body["applyNo"] || "";
-        const ekycUserId = body["ekycUserId"] || "";
-        const docType = body["docType"] || "";
-        const docFrontImage = body["docFrontImage"] || "";
-        const docFrontImage2 = body["docFrontImage2"] || "";
-        const docFrontImage3 = body["docFrontImage3"] || "";
-        const docFrontImage4 = body["docFrontImage4"] || "";
-        const docFrontImage5 = body["docFrontImage5"] || "";
-        const docFrontImage6 = body["docFrontImage6"] || "";
-        const xForwardefFor = headers && headers["x-forwarded-for"] || "";
-        const userAgent = headers && headers["user-agent"] || "";
-        const currentDate = new Date().toISOString();
+        // const body = JSON.parse(req.body);
+        // const headers = req.headers;
+        //const applyNo = body.applyNo || "";
+        // const applyNo = body["applyNo"] || "";
+        // const ekycUserId = body["ekycUserId"] || "";
+        // const docType = body["docType"] || "";
+        // const docFrontImage = body["docFrontImage"] || "";
+        // const docFrontImage2 = body["docFrontImage2"] || "";
+        // const docFrontImage3 = body["docFrontImage3"] || "";
+        // const docFrontImage4 = body["docFrontImage4"] || "";
+        // const docFrontImage5 = body["docFrontImage5"] || "";
+        // const docFrontImage6 = body["docFrontImage6"] || "";
+        // const xForwardefFor = headers && headers["x-forwarded-for"] || "";
+        // const userAgent = headers && headers["user-agent"] || "";
+        // const currentDate = new Date().toISOString();
+        // const insertRecord = {
+        //     id: currentDate,
+        //     applyNo: applyNo,
+        //     ekycUserId: ekycUserId,
+        //     ipAddress: xForwardefFor,
+        //     userAgent: userAgent,
+        //     ekycStartDate: currentDate,
+        //     ekycEndDate: currentDate,
+        //     docType: docType,
+        //     docFrontImage: docFrontImage,
+        //     docFrontImage2: docFrontImage2,
+        //     docFrontImage3: docFrontImage3,
+        //     docFrontImage4: docFrontImage4,
+        //     docFrontImage5: docFrontImage5,
+        //     docFrontImage6: docFrontImage6,
+        //     timestamp: currentDate
+        // };
 
-        // 挿入するデータ
-        const insertRecord = {
-            id: currentDate,
-            applyNo: applyNo,
-            ekycUserId: ekycUserId,
-            ipAddress: xForwardefFor,
-            userAgent: userAgent,
-            ekycStartDate: currentDate,
-            ekycEndDate: currentDate,
-            docType: docType,
-            docFrontImage: docFrontImage,
-            docFrontImage2: docFrontImage2,
-            docFrontImage3: docFrontImage3,
-            docFrontImage4: docFrontImage4,
-            docFrontImage5: docFrontImage5,
-            docFrontImage6: docFrontImage6,
-            timestamp: currentDate
-        };
+        // POSTされたJSONをそのままDBに格納する。
+        const insertJson = req.body
+        //console.log("req.body=", req.body)
 
         // MySQL接続情報をSecretManagerから取得
         const secret_name = "devMySQLUser";
@@ -119,8 +119,8 @@ const EdyEkyc = async(req, res) => {
         const secretJson = JSON.parse(secret);
 
         const connection = mysql.createConnection({
-            //host: 'localhost',
-            host: secretJson.host,
+            host: 'localhost', // DEBUG for Local
+            //host: secretJson.host,
             user: secretJson.username,
             password: secretJson.password,
             database: 'post1'
@@ -138,8 +138,11 @@ const EdyEkyc = async(req, res) => {
                 }
                 return res.status(501).json(response)
             } else {
-                const query = 'INSERT INTO ekyc SET ?'
-                const result = connection.query(query, insertRecord);
+                //const query = 'INSERT INTO ekyc SET ?'
+                //const result = connection.query(query, insertRecord);
+                // JSON形式でDBに格納
+                const query = 'INSERT INTO ekyc2 (ekyc) values (?)'
+                const result = connection.query(query, insertJson);
                 console.log('データが挿入されました:');
 
                 const response = {
